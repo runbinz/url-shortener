@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -23,6 +24,13 @@ func (us *URLShortener) HandleShorten(w http.ResponseWriter, r *http.Request) {
 	originalURL := r.FormValue("url")
 	if originalURL == "" {
 		http.Error(w, "Missing 'url' parameter", http.StatusBadRequest)
+		return
+	}
+
+	// validate the original url
+	_, err := url.ParseRequestURI(originalURL)
+	if err != nil {
+		http.Error(w, "Invalid 'url' parameter", http.StatusBadRequest)
 		return
 	}
 
